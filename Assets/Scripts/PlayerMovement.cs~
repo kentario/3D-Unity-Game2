@@ -1,0 +1,109 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerMovement : MonoBehaviour
+{
+    [SerializeField] ParticleSystem collectParticle = null;
+    
+    public float Sensitivity;
+    public float maxAngle;
+    public float sprintModifier = 0.0f;
+    public float speed = 5.0f;
+    public float jumpForce = 5.0f;
+    public Camera normalCam;
+    
+    public Transform player;
+    public Transform cams;
+    
+    public bool isOnGround = true;
+    public static bool cursorLocked = true;
+
+    private float forwardJumpSpeed = 3f;
+    private float horizontalInput;
+    private float forwardInput;
+    private float baseFOV;
+    private float sprintFOVModifier = 1.2f;
+    
+    private Rigidbody playerRb;
+    private Quaternion camCenter;
+    
+    void Start() {
+    	baseFOV = normalCam.fieldOfView;
+	playerRb = GetComponent<Rigidbody>();
+	camCenter = cams.localRotation;
+	
+    }
+    
+    void Update() {
+	horizontalInput = Input.GetAxisRaw("Horizontal");
+	forwardInput = Input.GetAxisRaw("Vertical");
+	
+	bool sprint = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftAlt);
+	bool isSprinting = sprint && forwardInput > 0;
+	
+	float t_adjustedSpeed = speed;
+	
+	if (isSprinting) t_adjustedSpeed *= sprintModifier;
+	
+	transform.Translate(Vector3.forward * Time.deltaTime * t_adjustedSpeed * forwardInput);
+	transform.Translate(Vector3.right * Time.deltaTime * t_adjustedSpeed * horizontalInput);
+	
+	if (Input.GetKey(KeyCode.Space) && isOnGround) {
+	    playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+	    isOnGround = false;
+	}
+	
+	SetY();
+	SetX();
+	
+	UpdateCursorLock();
+	
+	if (isSprinting) {normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * sprintFOVModifier, Time.deltaTime * 8f);}
+	else {normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV, Time.deltaTime * 8f);}
+    }
+    
+    private void OnCollisionEnter(Collision collision) {
+	if (collision.gameObject.CompareTag("Ground")) {isOnGround = true;}
+	Collect();
+    }
+    
+    void SetY() {
+	float t_input = Input.GetAxis("Mouse Y") * Sensitivity * Time.deltaTime;
+	Quaternion t_adj = Quaternion.AngleAxis(t_input, -Vector3.right);
+	Quaternion t_delta = cams.localRotation * t_adj;
+	
+	if (Quaternion.Angle(camCenter, t_delta) < maxAngle) {
+	    cams.localRotation = t_delta;
+	}
+    }
+    
+    void SetX() {
+	float t_input = Input.GetAxis("Mouse X") * Sensitivity * Time.deltaTime;
+	Quaternion t_adj = Quaternion.AngleAxis(t_input, Vector3.up);
+	Quaternion t_delta = player.localRotation * t_adj;
+	player.localRotation = t_delta;
+    }
+    
+    void UpdateCursorLock() {
+	if (cursorLocked) {
+	    Cursor.lockState = CursorLockMode.Locked;
+	    Cursor.visible = false;
+	    
+	    if (Input.GetKeyDown(KeyCode.Escape)) {
+		cursorLocked = false;
+	    }
+	} else {
+	    Cursor.lockState = CursorLockMode.None;
+	    Cursor.visible = true;
+	    
+	    if (Input.GetKeyDown(KeyCode.Escape)) {
+		cursorLocked = true;
+	    }
+	}
+    }
+
+    public void Collect() {
+	collectParticle.Play();
+    }
+}
