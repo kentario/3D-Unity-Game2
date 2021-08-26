@@ -6,8 +6,7 @@ public class Player : MonoBehaviour
 {
     public float gunAmmunition = 30.0f;
     public float gunMagazines = 15.0f;
-    public float Sensitivity;
-    public float maxAngle;
+    public float Sensitivity = 70.0f;
     
     public bool isOnGround = true;
     public static bool cursorLocked = true;
@@ -15,7 +14,8 @@ public class Player : MonoBehaviour
 
     public ParticleSystem muzzleFlash;
     public ParticleSystem collisionParticle;
-
+    
+    private float maxAngle = 90.0f;
     private float sprintModifier = 1.2f;
     private float speed = 5.0f;
     private float jumpForce = 5.0f;
