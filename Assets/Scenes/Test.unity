@@ -188,19 +188,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 186384074}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31311275b82b14e16bfe79bc4c4bc9c9, type: 3}
+  m_Script: {fileID: 11500000, guid: 0146873d305767751a0274e9e268a9e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectParticle: {fileID: 1290687677}
-  Sensitivity: 70
-  maxAngle: 90
-  sprintModifier: 1.4
-  speed: 5
-  jumpForce: 5
+  gunAmmunition: 30
+  gunMagazines: 15
+  Sensitivity: 0
+  maxAngle: 0
+  isOnGround: 1
   normalCam: {fileID: 1755284313}
+  muzzleFlash: {fileID: 0}
+  collisionParticle: {fileID: 1290687677}
   player: {fileID: 186384080}
   cams: {fileID: 1755284314}
-  isOnGround: 1
 --- !u!54 &186384076
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1076,7 +1076,7 @@ GameObject:
   - component: {fileID: 1290687677}
   - component: {fileID: 1290687676}
   m_Layer: 0
-  m_Name: collectParticle
+  m_Name: Collision Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
