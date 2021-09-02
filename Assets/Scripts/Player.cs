@@ -9,12 +9,12 @@ public class Player : MonoBehaviour
     public float Sensitivity = 70.0f;
     
     public bool isOnGround = true;
-    public static bool cursorLocked = true;
     public Camera normalCam;
 
     public ParticleSystem muzzleFlash;
     public ParticleSystem collisionParticle;
-    
+
+    private float health = 100.0f;
     private float maxAngle = 90.0f;
     private float sprintModifier = 1.2f;
     private float speed = 5.0f;
@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     	baseFOV = normalCam.fieldOfView;
 	playerRb = GetComponent<Rigidbody>();
 	camCenter = cams.localRotation;
-	
+	Cursor.lockState = CursorLockMode.Locked;
     }
     
     void Update() {
@@ -62,9 +62,9 @@ public class Player : MonoBehaviour
 	SetY();
 	SetX();
 	
-	UpdateCursorLock();
-	
 	Gun();
+
+	Health();
     }
     
     private void OnCollisionEnter(Collision collision) {
@@ -88,25 +88,7 @@ public class Player : MonoBehaviour
 	Quaternion t_delta = player.localRotation * t_adj;
 	player.localRotation = t_delta;
     }
-    
-    void UpdateCursorLock() {
-	if (cursorLocked) {
-	    Cursor.lockState = CursorLockMode.Locked;
-	    Cursor.visible = false;
-	    
-	    if (Input.GetKeyDown(KeyCode.Escape)) {
-		cursorLocked = false;
-	    }
-	} else {
-	    Cursor.lockState = CursorLockMode.None;
-	    Cursor.visible = true;
-	    
-	    if (Input.GetKeyDown(KeyCode.Escape)) {
-		cursorLocked = true;
-	    }
-	}
-    }
-    
+ 
     public void Gun() {
     	if (Input.GetKeyDown(KeyCode.Mouse0) && gunAmmunition > 0) {
     	    gunAmmunition -= 1;
@@ -117,5 +99,9 @@ public class Player : MonoBehaviour
 	    gunAmmunition = 30;
     	    gunMagazines -= 1;
     	}
+    }
+
+    public void Health() {
+	
     }
 }
